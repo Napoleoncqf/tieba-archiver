@@ -1,0 +1,7 @@
+Downloads/
+UserData/
+error_dump.html
+__pycache__/
+*.pyc
+.DS_Store
+CLAUDE.md
