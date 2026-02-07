@@ -5,7 +5,7 @@ import random
 import re
 
 # --- 配置 ---
-BASE_DIR = 'Downloads'
+BASE_DIR = r'C:\Users\admin\Downloads'
 MAX_PAGES = 100
 
 
@@ -27,6 +27,10 @@ def extract_post_id(url):
 def backup_thread(page, post_id):
     assets_dir = os.path.join(BASE_DIR, 'assets')
     os.makedirs(assets_dir, exist_ok=True)
+
+    # 设置页面加载策略和超时
+    page.set.load_mode.eager()  # 不等待所有资源加载完毕
+    page.set.timeouts(base=15, page_load=30)
 
     # 先访问帖子获取标题
     page.get(f'https://tieba.baidu.com/p/{post_id}?see_lz=1')
@@ -60,7 +64,7 @@ def backup_thread(page, post_id):
             break
 
         url = f'https://tieba.baidu.com/p/{post_id}?see_lz=1&pn={pn}'
-        print(f"   读取第 {pn} 页...", end="")
+        print(f"   读取第 {pn} 页...", end="", flush=True)
 
         try:
             page.get(url)
@@ -80,12 +84,12 @@ def backup_thread(page, post_id):
                     total_span = soup.find('span', class_='tP')
                     if total_span:
                         actual_total_pages = int(total_span.get_text())
-                        print(f" [识别到共 {actual_total_pages} 页] ", end="")
+                        print(f" [识别到共 {actual_total_pages} 页] ", end="", flush=True)
                     else:
                         next_page = soup.find('a', text='下一页')
                         if not next_page:
                             actual_total_pages = 1
-                            print(f" [识别到共 1 页] ", end="")
+                            print(f" [识别到共 1 页] ", end="", flush=True)
                 except:
                     pass
 
@@ -181,7 +185,9 @@ def connect_browser():
     if choice == '2':
         print("正在启动浏览器...")
         try:
-            page = ChromiumPage()
+            co = ChromiumOptions()
+            co.set_argument('--no-proxy-server')
+            page = ChromiumPage(co)
             print(">>> 浏览器启动成功！")
             return page
         except Exception as e:
@@ -191,6 +197,7 @@ def connect_browser():
         print("正在接管浏览器...")
         co = ChromiumOptions()
         co.set_address('127.0.0.1:9222')
+        co.set_argument('--no-proxy-server')
         try:
             page = ChromiumPage(co)
             print(f">>> 接管成功！当前页面: {page.title}")
