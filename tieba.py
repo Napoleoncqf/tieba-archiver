@@ -5,7 +5,7 @@ import random
 import re
 
 # --- 配置 ---
-BASE_DIR = r'C:\Users\admin\Downloads'
+BASE_DIR = r'C:\Users\admin\Downloads\tieba-backupmd'
 MAX_PAGES = 100
 
 
