@@ -12,6 +12,9 @@
 
 基于 DrissionPage + BeautifulSoup 的贴吧帖子归档工具。抓取帖子正文 + 高清原图，输出为 Markdown 文件。
 
+> [!IMPORTANT]
+> 贴吧 PC 帖子页已经改为 Vue 动态渲染。当前 `tieba.py` 中基于 `.l_post` / `.d_post_content` 的旧版解析逻辑不能完整处理新版页面，尤其会漏掉楼中楼和 `.image-card-wrapper` 中的图片。新版页面的完整实测方法、选择器、楼中楼分页接口、图片本地化和校验流程见 [贴吧新版完整归档实现记录](docs/modern-tieba-full-archive.md)。
+
 ---
 
 ## 安装
@@ -117,3 +120,18 @@ Markdown 文件包含：帖子标题、原始链接、各楼层正文、内嵌�
 | 验证码 | 遇到百度安全验证时暂停，等你手动搞定 |
 | 高清图 | 从 `imgsrc.baidu.com` 拉原图，非缩略图 |
 | 限速 | 每页间隔 2~3 秒随机延迟 |
+
+---
+
+## 完整 HTML 存档校验
+
+仓库提供一个不依赖第三方库的校验工具，用于检查主楼层、楼中楼和本地图片引用：
+
+```bash
+python tools/verify_archive.py "帖子（全部楼层）.html" \
+  --expected-main 566 \
+  --expected-nested 1249 \
+  --expected-assets 220
+```
+
+真实帖子正文、楼中楼数据和图片默认不应提交到公共仓库；`.gitignore` 已排除生成的 HTML、资源目录和抓取中间状态。

@@ -1,7 +1,16 @@
+# Generated archives and private scrape state
 Downloads/
 UserData/
 error_dump.html
+*.html
+*_assets/
+.archive-*/
+archive-output/
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Local project metadata
 .DS_Store
 CLAUDE.md
